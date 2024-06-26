@@ -10,13 +10,6 @@ function M:add(package)
   return self
 end
 
----@param packagelist table<Package>
-function M:addlist(packagelist)
-  for _, value in ipairs(packagelist) do
-    self:add(value)
-  end
-end
-
 function M:duplication()
   for i = 1, #self.packages_list, 1 do
     for j = i + 1, #self.packages_list, 1 do

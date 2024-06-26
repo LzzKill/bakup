@@ -9,17 +9,28 @@
 ---@field dependence ? boolean | function -- Only when it is true or return of function is true, it will be configure.
 ---@class Package_T : Package
 ---@field status PackageStatus
-
+---
+---@class DownloadOption
+---@field app string
+---@field arguments? string | string[]
+---@class GitOption
+---@field depth? integer
+---@field branch? string
+---@field arguments? string | string[]
+---@class DownloaderOption
+---@field Downloader? DownloadOption
+---@field Git? GitOption
+---@field thread boolean
 ---@class BakupOption
 ---@field [1] SystemPackageManager
----@field Downloader string?
----@field Git string?
----@field Gitdir string?
-
+---@field Download? DownloaderOption
+---@class File
+---@field [1] string
+---@field [2]? string
 ---@class SystemPackageManager
 ---@field command string
 ---@field update string
----@field upgrade string | boolean
+---@field upgrade? string | boolean
 ---@field remove string
 ---@field remove_with_depend string
 ---@field remove_cache string
@@ -28,6 +39,9 @@
 ---@field install_local string
 ---@field remove_cache_all string?
 ---
+---@class Bakup
+---@field option BakupOption
+---@field packages BakupPackageManager
 
 ---@enum PackageStatus
 local PackageStatus = {
@@ -44,15 +58,24 @@ local PackageEvent = {
   done = 3
 }
 
-
-local M = {}
-M.linux = {}
+---@type BakupOption
+local BakupOption = {
+  Download = {
+    Git = {
+      depth = 1,
+    },
+    Downloader = {
+      app = "curl",
+      arguments = "-O",
+    },
+  thread = true
+  }
+}
 
 ---@type SystemPackageManager
-M.linux.pacman = {
+local pacman = {
   command = "pacman",
   update = "-Syu",
-  upgrade = false,
   remove = "-R",
   remove_with_depend = "-Rsu",
   remove_cache = "-Sc",
@@ -62,11 +85,14 @@ M.linux.pacman = {
   remove_cache_all = "-Scc"
 }
 
+local M = {}
+M.linux = {}
 
-M.linux.arch = M.linux.pacman
-M.linux.maojaro = M.linux.pacman
----@type BakupOption
-local BakupOption = {}
+
+
+M.linux.arch = pacman
+M.linux.maojaro = pacman
+
 
 M.status = PackageStatus
 M.bakup_option = BakupOption

@@ -5,12 +5,11 @@ local M = {
 ---@param option table
 ---@param option_n table
 ---@return table
-Option_c = function(option, option_n)
+Option_c = function(option_n, option)
   if not option then return option_n end
-
   local o = {}
-  for i, j in ipairs(option) do
-    o[i] = option_n[i] or j
+  for i, j in pairs(option_n) do
+    o[i] = option[i] or j
   end
   return o
 end
@@ -27,13 +26,15 @@ TableCover = function(t, s)
   for _, value in pairs(t) do
     if type(value) == "table" then
       c = c .. TableCover(value, s) .. s
+    else
+      c = c .. value .. s
     end
   end
   return c
 end
 
 
----@param ... string
+---@param ... string | table
 ---@return string
 -- It marge all string to one string and use " " connect.
 BuildCommand_t = function(...)

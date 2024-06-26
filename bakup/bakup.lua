@@ -3,8 +3,6 @@ require("bakup.utils")
 local types = require("bakup.types")
 
 ---@class Bakup
----@field option BakupOption
----@field packages BakupPackageManager
 local M = {}
 
 M.linux = types.linux
@@ -18,7 +16,7 @@ function M:new(option, o)
   self.option = Option_c(types.bakup_option, option)
   self.manager = option[1]
   self.packages = require("bakup.packages"):new()
-
+  self.downloader = require("bakup.files"):new(option.Download)
   return class
 end
 
@@ -37,6 +35,31 @@ function M:get_packages()
   return {
     localpackage, webpackage
   }
+end
+
+
+---@param packagelist table<Package>
+function M:addlist(packagelist)
+  for _, value in ipairs(packagelist) do
+    self.packages:add(value)
+  end
+end
+
+function M:addgitlist(gitlist)
+  for _, value in ipairs(gitlist) do
+    self.downloader:add_g(value)
+  end
+end
+
+function M:addfilelist(filelist)
+  for _, value in ipairs(filelist) do
+    self.downloader:add_d(value)
+  end
+end
+
+function M:download_files()
+  self.downloader:do_d()
+  self.downloader:do_g()
 end
 
 function M:install_packages()
@@ -80,6 +103,5 @@ function M:clean()
   SystemRun(BuildCommand_u(self.manager.command, self.manager.remove_cache))
 end
 
-function M:getPackages() return self.packages end
 
 return M
