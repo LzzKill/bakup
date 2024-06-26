@@ -44,13 +44,14 @@ function M:addlist(packagelist)
     self.packages:add(value)
   end
 end
-
+---@param gitlist table<File>
 function M:addgitlist(gitlist)
   for _, value in ipairs(gitlist) do
     self.downloader:add_g(value)
   end
 end
 
+---@param filelist table<File>
 function M:addfilelist(filelist)
   for _, value in ipairs(filelist) do
     self.downloader:add_d(value)
