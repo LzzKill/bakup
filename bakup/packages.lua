@@ -1,5 +1,3 @@
-local types = require("bakup.types")
-
 ---@class BakupPackageManager
 local M = {}
 
@@ -29,24 +27,10 @@ function M:duplication()
   end
 end
 
-function M:download()
-
-end
-
-function M:update()
-end
-
-function M:install()
-  M:duplication()
-  -- local option = self.option
-end
-
----@param option PackageOption
-function M:new(option, o)
+function M:new(o)
   local class = o or {}
   setmetatable(class, self)
   self.__index = self
-  self.option = Option_c(types.package_option, option)
   return class
 end
 

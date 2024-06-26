@@ -1,5 +1,34 @@
 ---@alias command string[]
+---@class Package
+---@field [1] string
+---@field loca? boolean
+---@field path? string
+---@field version? string
+---@field config? function | command
+---@field file? string
+---@field dependence ? boolean | function -- Only when it is true or return of function is true, it will be configure.
+---@class Package_T : Package
+---@field status PackageStatus
+
+---@class BakupOption
+---@field [1] SystemPackageManager
+---@field Downloader string?
+---@field Git string?
+---@field Gitdir string?
+
+---@class SystemPackageManager
+---@field command string
+---@field update string
+---@field upgrade string | boolean
+---@field remove string
+---@field remove_with_depend string
+---@field remove_cache string
+---@field download_only string
+---@field install string
+---@field install_local string
+---@field remove_cache_all string?
 ---
+
 ---@enum PackageStatus
 local PackageStatus = {
   uninstalled = 1,
@@ -15,45 +44,29 @@ local PackageEvent = {
   done = 3
 }
 
----@class PackageConfig
----@field loca? boolean
----@field path? string
----@field config? function | command
----@field dependence ? Package[] | boolean -- If it is a package, when that
----package was done, it will be configured; If it is a boolean, when that
----boolean is "true" (or return value of function is "true"), it will be configured
----
----@class Package
----@field [1] string
----@field config? PackageConfig
----@field version? string
----
----@class Package_T : Package
----@field status PackageStatus
-
----@class PackageOption
----@field maxthreads number
----@field timeout number -- ms
----@field autoclean boolean -- If true, when a thread done it's task(e.g. download), it end or not to do next step.
----@field password string?
----@type PackageOption
-local PackageOption = {
-  maxthreads = 8,
-  timeout = 120,
-  autoclean = false,
-}
-
----@class BakupOption
----@field [1] SystemPackageManager
----@field Downloader string?
----@field Git string?
----@field Gitdir string?
----@field PackagesOption PackageOption?
-local BakupOption = {}
 
 local M = {}
 
+---@type SystemPackageManager
+M.linux.pacman = {
+  command = "pacman",
+  update = "-Syu",
+  upgrade = false,
+  remove = "-R",
+  remove_with_depend = "-Rsu",
+  remove_cache = "-Sc",
+  download_only = "-Sw",
+  install = "-S",
+  install_local = "-U",
+  remove_cache_all = "-Scc"
+}
+
+
+M.linux.arch = M.pacman
+M.linux.maojaro = M.pacman
+---@type BakupOption
+local BakupOption = {}
+
 M.status = PackageStatus
-M.package_option = PackageOption
 M.bakup_option = BakupOption
 return M
