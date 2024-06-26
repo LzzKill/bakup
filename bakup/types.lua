@@ -46,6 +46,7 @@ local PackageEvent = {
 
 
 local M = {}
+M.linux = {}
 
 ---@type SystemPackageManager
 M.linux.pacman = {
@@ -62,8 +63,8 @@ M.linux.pacman = {
 }
 
 
-M.linux.arch = M.pacman
-M.linux.maojaro = M.pacman
+M.linux.arch = M.linux.pacman
+M.linux.maojaro = M.linux.pacman
 ---@type BakupOption
 local BakupOption = {}
 

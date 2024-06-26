@@ -7,11 +7,7 @@ local types = require("bakup.types")
 ---@field packages BakupPackageManager
 local M = {}
 
-function M.init()
-  local uid
-  uid = os.getenv("UID")
-  BuildCommand_c(uid)
-end
+M.linux = types.linux
 
 ---@param option BakupOption
 ---@return Bakup
@@ -22,6 +18,7 @@ function M:new(option, o)
   self.option = Option_c(types.bakup_option, option)
   self.manager = option[1]
   self.packages = require("bakup.packages"):new()
+
   return class
 end
 
