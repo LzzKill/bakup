@@ -18,16 +18,24 @@ end
 BuildCommand = function()
 
 end
+
+---@param t table
+---@param s string
+-- Cover table to string and use "s" connect.
 TableCover = function(t, s)
   local c = ""
   for _, value in pairs(t) do
     if type(value) == "table" then
-      c = c .. TableCover(value) .. s
+      c = c .. TableCover(value, s) .. s
     end
   end
   return c
 end
 
+
+---@param ... string
+---@return string
+-- It marge all string to one string and use " " connect.
 BuildCommand_t = function(...)
   local c = ""
   if next({ ... }) then
@@ -39,12 +47,14 @@ BuildCommand_t = function(...)
         c = c .. s .. " "
       end
     end
-    return c
-  else
-    return nil
   end
+  return c
 end
 
+
+---@param ... string
+---@return string
+-- Auto add "sudo"
 BuildCommand_u = function(...)
   if M.root then
     return BuildCommand_t(...)
@@ -53,12 +63,12 @@ BuildCommand_u = function(...)
   end
 end
 
-BuildCommand_c = function(uid)
-  if uid == 0 then
-    M.root = true
-  end
-end
-
 SystemRun = function(command)
   os.execute(command)
+end
+
+
+
+if os.getenv("UID") == 0 then
+  M.root = true
 end
