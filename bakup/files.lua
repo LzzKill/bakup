@@ -3,6 +3,7 @@ local co = coroutine
 ---@class Downloader
 local M = {}
 
+---Return new object. -- NOTE: Need to be changed.
 ---@param option DownloaderOption
 ---@param o? Downloader
 ---@return Downloader
@@ -25,13 +26,14 @@ function M:new(option, o)
   end
   self.command_d = BuildCommand_t(cd)
   self.command_g = BuildCommand_t(cg)
-  ---@type File[]
+  ---@type table<File>
   self.task_d = {}
-  ---@type File[]
+  ---@type table<File>
   self.task_g = {}
   return class
 end
 
+---Add a git task. -- NOTE: Task to be changed.
 ---@param file string | File
 function M:add_g(file)
   if type(file) == "string" then
@@ -41,6 +43,7 @@ function M:add_g(file)
   end
 end
 
+---Add a downloading task -- NOTE: Task to be changed.
 ---@param file string | File
 function M:add_d(file)
   if type(file) == "string" then

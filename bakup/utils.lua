@@ -2,9 +2,9 @@ local M = {
   root = false
 }
 
----@param option table
----@param option_n table
----@return table
+---@param option table<any>
+---@param option_n table<any>
+---@return table<any>
 Option_c = function(option_n, option)
   if not option then return option_n end
   local o = {}
@@ -14,11 +14,9 @@ Option_c = function(option_n, option)
   return o
 end
 
-BuildCommand = function()
+BuildCommand = function() end -- Placeholders
 
-end
-
----@param t table
+---@param t table<any>
 ---@param s string
 -- Cover table to string and use "s" connect.
 TableCover = function(t, s)
@@ -34,7 +32,7 @@ TableCover = function(t, s)
 end
 
 
----@param ... string | table
+---@param ... string | table<string>
 ---@return string
 -- It marge all string to one string and use " " connect.
 BuildCommand_t = function(...)
@@ -53,7 +51,7 @@ BuildCommand_t = function(...)
 end
 
 
----@param ... string
+---@param ... string | table<string>
 ---@return string
 -- Auto add "sudo"
 BuildCommand_u = function(...)
@@ -67,8 +65,6 @@ end
 SystemRun = function(command)
   os.execute(command)
 end
-
-
 
 if os.getenv("UID") == 0 then
   M.root = true

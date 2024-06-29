@@ -4,10 +4,11 @@ local types = require("bakup.types")
 
 ---@class Bakup
 local M = {}
-
 M.linux = types.linux
 
+---Return new object.
 ---@param option BakupOption
+---@param o? Bakup
 ---@return Bakup
 function M:new(option, o)
   local class = o or {}

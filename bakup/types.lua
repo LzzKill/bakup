@@ -1,24 +1,23 @@
----@class Package
----@field [1] string
+---@class Package -- TODO:
+---@field [1] string | table<string>
 ---@field path? string
 ---@field version? string
----@field config? function | string[]
----@field file? string
----@field dependence ? boolean | function -- Only when it is true or return of function is true, it will be configure.
+---@field config? function | table<string>
+---@field file? string -- Configure lua
+---@field dependence ? boolean | function -- Only when it is true, it will be configure.
 ---@class Package_T : Package
 ---@field status PackageStatus
----
 ---@class DownloadOption
 ---@field app string
----@field arguments? string | string[]
+---@field arguments? string | table<string>
 ---@class GitOption
 ---@field depth? integer
 ---@field branch? string
----@field arguments? string | string[]
+---@field arguments? string | table<string>
 ---@class DownloaderOption
 ---@field Downloader? DownloadOption
 ---@field Git? GitOption
----@field thread boolean
+---@field thread? boolean
 ---@class BakupOption
 ---@field [1] SystemPackageManager
 ---@field Download? DownloaderOption
