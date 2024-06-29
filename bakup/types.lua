@@ -87,7 +87,7 @@ local pacman = {
 local M = {}
 M.linux = {}
 
-
+M.linux.pacman = pacman
 
 M.linux.arch = pacman
 M.linux.maojaro = pacman
