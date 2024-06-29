@@ -26,7 +26,7 @@ function M:get_packages()
   local localpackage = ""
   local webpackage = ""
   for _, value in ipairs(list) do
-    if value.loca then
+    if value.path then
       localpackage = localpackage .. value.path .. " "
     else
       webpackage = webpackage .. value[1] .. " "
@@ -37,22 +37,22 @@ function M:get_packages()
   }
 end
 
-
 ---@param packagelist table<Package>
-function M:addlist(packagelist)
+function M:addPackage_list(packagelist)
   for _, value in ipairs(packagelist) do
     self.packages:add(value)
   end
 end
+
 ---@param gitlist table<File>
-function M:addgitlist(gitlist)
+function M:addGit_list(gitlist)
   for _, value in ipairs(gitlist) do
     self.downloader:add_g(value)
   end
 end
 
 ---@param filelist table<File>
-function M:addfilelist(filelist)
+function M:addFile_list(filelist)
   for _, value in ipairs(filelist) do
     self.downloader:add_d(value)
   end
@@ -103,6 +103,5 @@ end
 function M:clean()
   SystemRun(BuildCommand_u(self.manager.command, self.manager.remove_cache))
 end
-
 
 return M

@@ -1,10 +1,8 @@
----@alias command string[]
 ---@class Package
 ---@field [1] string
----@field loca? boolean
 ---@field path? string
 ---@field version? string
----@field config? function | command
+---@field config? function | string[]
 ---@field file? string
 ---@field dependence ? boolean | function -- Only when it is true or return of function is true, it will be configure.
 ---@class Package_T : Package
@@ -27,6 +25,7 @@
 ---@class File
 ---@field [1] string
 ---@field [2]? string
+---@field branch? string -- Only git mode need
 ---@class SystemPackageManager
 ---@field command string
 ---@field update string

@@ -79,7 +79,7 @@ function M:do_g()
     local t = {}
     for _, value in ipairs(self.task_g) do
       local m = co.create(function()
-        SystemRun(BuildCommand_t(self.command_g, value[1], (value[2] or "")))
+        SystemRun(BuildCommand_t(self.command_g, value[1], (value[2] or ""), (value.branch or "")))
       end)
       table.insert(t, m)
       co.resume(m)
