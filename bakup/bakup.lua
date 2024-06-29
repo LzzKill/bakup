@@ -29,7 +29,11 @@ function M:get_packages()
     if value.path then
       localpackage = localpackage .. value.path .. " "
     else
-      webpackage = webpackage .. value[1] .. " "
+      if type(value[1]) == "table" then
+        webpackage = webpackage .. TableCover(value[1], " ") .. " "
+      else
+        webpackage = webpackage .. value[1] .. " "
+      end
     end
   end
   return {
