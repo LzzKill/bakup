@@ -1,30 +1,32 @@
----@class Package -- TODO:
----@field [1] string | table<string>
----@field path? string
----@field version? string
----@field config? function | table<string>
----@field file? string -- Configure lua
----@field dependence ? boolean | function -- Only when it is true, it will be configure.
----@class Package_T : Package
----@field status PackageStatus
----@class DownloadOption
----@field app string
----@field arguments? string | table<string>
----@class GitOption
----@field depth? integer
----@field branch? string
----@field arguments? string | table<string>
----@class DownloaderOption
----@field Downloader? DownloadOption
----@field Git? GitOption
----@field thread? boolean
----@class BakupOption
----@field [1] SystemPackageManager
----@field Download? DownloaderOption
 ---@class File
 ---@field [1] string
 ---@field [2]? string
 ---@field branch? string -- Only git mode need
+
+---@class GitInfo
+---@field [1] string
+---@field [2]? string
+---@field option string | table<string>
+
+---@class Package
+---@field [1] string | table<string>
+--@field path? File
+--@field version? string
+---@field dependence? function | boolean
+---@field command? table<string> | string
+---@field git? table<GitInfo>
+---@field config? function | table<string>
+---@class Package_S: Package
+---@field status? PackageStatus | table<PackageStatus>
+
+---@class DownloadOption
+---@field app string
+---@field arguments string | table<string>
+---@class GitOption
+---@field depth? integer
+---@field branch? string
+---@field arguments? string | table<string>
+
 ---@class SystemPackageManager
 ---@field command string
 ---@field update string
@@ -36,39 +38,21 @@
 ---@field install string
 ---@field install_local string
 ---@field remove_cache_all string?
----
----@class Bakup
----@field option BakupOption
----@field packages BakupPackageManager
+---@field root boolean
+
+---@class PackageManagerOption
+---@field [1] SystemPackageManager
+---@field data? string
+
+---@class Data
+---@field file string
 
 ---@enum PackageStatus
-local PackageStatus = {
-  uninstalled = 1,
-  downloading = 2,
-  downloaded = 3,
-  done = 4
-}
-
----@enum PackageEvent
-local PackageEvent = {
-  uninstalled = 1,
-  downloaded = 2,
-  done = 3
-}
-
----@type BakupOption
-local BakupOption = {
-  Download = {
-    Git = {
-      depth = 1,
-    },
-    Downloader = {
-      app = "curl",
-      arguments = "-O",
-    },
-  thread = true
-  }
-}
+local PackageStatus = { uninstall = "1", installed = "2", downloaded = "3", only_downloaded = "4" }
+---@type DownloadOption
+local DownloadOption = { app = "curl", arguments = "-O" }
+---@type GitOption
+local GitOption = { depth = 1 }
 
 ---@type SystemPackageManager
 local pacman = {
@@ -80,7 +64,8 @@ local pacman = {
   download_only = "-Sw",
   install = "-S",
   install_local = "-U",
-  remove_cache_all = "-Scc"
+  remove_cache_all = "-Scc",
+  root = true
 }
 
 local M = {}
@@ -91,7 +76,10 @@ M.linux.pacman = pacman
 M.linux.arch = pacman
 M.linux.maojaro = pacman
 
-
 M.status = PackageStatus
-M.bakup_option = BakupOption
+M.bakup_option = DownloadOption
+
+M.download_option = DownloadOption
+M.git_option = GitOption
+
 return M

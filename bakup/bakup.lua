@@ -1,112 +1,75 @@
-require("bakup.utils")
-
-local types = require("bakup.types")
-
----@class Bakup
+---@class PackageManager
 local M = {}
+local types = require("./bakup.types")
 M.linux = types.linux
+require("./bakup.utils")
 
 ---Return new object.
----@param option BakupOption
----@param o? Bakup
----@return Bakup
+---@param option PackageManagerOption
+---@param o? PackageManager
+---@return PackageManager
 function M:new(option, o)
   local class = o or {}
   setmetatable(class, self)
   self.__index = self
-  self.option = Option_c(types.bakup_option, option)
-  self.manager = option[1]
-  self.packages = require("bakup.packages"):new()
-  self.downloader = require("bakup.files"):new(option.Download)
+  self.option = option
+  ---@type table<Package_S>
+  self.packages = {}
+  -- self.data = require("./data"):new(option.data or "data")
   return class
 end
 
----@return table<string>
-function M:get_packages()
-  local list = self.packages.packages_list
-  local localpackage = ""
-  local webpackage = ""
-  for _, value in ipairs(list) do
-    if value.path then
-      localpackage = localpackage .. value.path .. " "
+---Add a new package
+---@param package Package_S
+function M:append(package)
+  local p = package
+  -- if type(package[1]) == "table" then
+  --   p.status = {}
+  --   for _, value in ipairs(package[1]) do
+  --     table.insert(p.status, self.data:getData(value) or "1")
+  --   end
+  -- else
+  --   p.status = self.data:getData(package[1]) or "1"
+  -- end
+  table.insert(self.packages, p)
+end
+
+function M:install()
+  for _, value in ipairs(self.packages) do
+    local t = type(value[1]); local cmd
+    if t == "table" then
+      cmd = BuildCommand_t(self.option[1].command, self.option[1].install, value[1])
     else
-      if type(value[1]) == "table" then
-        webpackage = webpackage .. TableCover(value[1], " ") .. " "
-      else
-        webpackage = webpackage .. value[1] .. " "
+      cmd = BuildCommand_t(self.option[1].command, self.option[1].install, value)
+    end
+    if self.option[1].root then
+      SystemRun(BuildCommand_u(cmd))
+    else
+      SystemRun(cmd)
+    end
+
+    -- if value.download then
+    --   for _, v in ipairs(value.download) do
+    --     SystemRun(BuildCommand_t(self.command_d, v[1], (v[2] or "")))
+    --   end
+    -- end
+    if value.git then
+      for _, v in ipairs(value.git) do
+        SystemRun(BuildCommand_t("git clone", v[1], (v[2] or ""), BuildCommand_t(v.option)))
       end
     end
-  end
-  return {
-    localpackage, webpackage
-  }
-end
-
----@param packagelist table<Package>
-function M:addPackage_list(packagelist)
-  for _, value in ipairs(packagelist) do
-    self.packages:add(value)
-  end
-end
-
----@param gitlist table<File>
-function M:addGit_list(gitlist)
-  for _, value in ipairs(gitlist) do
-    self.downloader:add_g(value)
-  end
-end
-
----@param filelist table<File>
-function M:addFile_list(filelist)
-  for _, value in ipairs(filelist) do
-    self.downloader:add_d(value)
-  end
-end
-
-function M:download_files()
-  self.downloader:do_d()
-  self.downloader:do_g()
-end
-
-function M:install_packages()
-  local commands = self:get_packages()
-  if commands[1] ~= "" then SystemRun(BuildCommand_u(self.manager.command, self.manager.install_local, commands[1])) end
-  if commands[2] ~= "" then SystemRun(BuildCommand_u(self.manager.command, self.manager.install, commands[2])) end
-end
-
-function M:download_packages()
-  local commands = self:get_packages()[2]
-  if commands ~= "" then SystemRun(BuildCommand_u(self.manager.command, self.manager.download_only, commands[2])) end
-end
-
-function M:update()
-  SystemRun(BuildCommand_u(self.manager.command, self.manager.update))
-  if self.manager.upgrade then
-    SystemRun(BuildCommand_u(self.manager.command, self.manager.upgrade))
-  end
-end
-
-function M:config_packages()
-  local list = M.packages.packages_list
-  for _, value in ipairs(list) do
-    if value.dependence then
-      local m = type(value.dependence)
-      if m == "function" and value.dependence() or m == "boolean" and value.dependence then
-        local t = type(value.config)
-        if t == "function" then
-          value.config()
-        elseif t == "string" then
-          SystemRun(value.config)
-        elseif t == "table" then
-          for _, v in pairs(value.config) do SystemRun(BuildCommand_t(v)) end
+    local dependence_t = type(value.dependence)
+    if (dependence_t == "function" and value.dependence()) or (dependence_t == "boolean" and value.dependence) then
+      local config_t = type(value.config)
+      if config_t == "function" then
+        value.config()
+      elseif config_t == "table" then
+        for _, v in ipairs(value.config) do
+          BuildCommand_t(v)
         end
       end
     end
   end
-end
-
-function M:clean()
-  SystemRun(BuildCommand_u(self.manager.command, self.manager.remove_cache))
 end
 
 return M

@@ -1,6 +1,4 @@
-local M = {
-  root = false
-}
+local M = {}
 
 ---@param option table<any>
 ---@param option_n table<any>
@@ -68,4 +66,8 @@ end
 
 if os.getenv("UID") == 0 then
   M.root = true
+else
+  M.root = false
 end
+
+return M
